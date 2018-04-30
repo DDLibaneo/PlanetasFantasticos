@@ -5,5 +5,13 @@ using UnityEngine;
 [System.Serializable]
 public class Explanation {
     
-	public List<string> paragraphs;
+	public string explanation;
+
+	public Explanation (string explanation) {
+		this.explanation = explanation;
+	}
+
+	public Explanation (IDictionary<string, object> dictionary) {
+		this.explanation = dictionary["explanation"].ToString();
+	}
 }

@@ -1,11 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase.Database;
+using System;
 
 [System.Serializable]
 public class Answer {
 	 
-	public Question Question {get; set;}
-	public int QuestionId {get; set;}
-	public string Text {get; set;}
+	public string answer;
+	public bool isCorrect;
+	
+	public Answer (string answer, bool isCorrect) {
+		
+		this.answer = answer;
+		this.isCorrect = isCorrect;
+	}
+
+	public Answer (IDictionary<string, object> dictionary) {
+		
+		this.answer = dictionary["answer"].ToString();
+		this.isCorrect = Convert.ToBoolean(dictionary["isCorrect"]);
+	 }
 }
