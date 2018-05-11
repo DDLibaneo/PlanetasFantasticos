@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 public class DatabaseManager : MonoBehaviour {
  
 	public static DatabaseManager sharedInstance = null;
-
+	private DataAdder dataAdder = new DataAdder();
+	public GetNodesTest getNodesTest;
 	/// <summary>
 	/// Awake this instance and initialize sharedInstance for Singleton pattern
 	/// </summary>
@@ -25,15 +26,13 @@ public class DatabaseManager : MonoBehaviour {
 
 		DontDestroyOnLoad(gameObject);
 		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://planets-tests.firebaseio.com/");
+		FirebaseApp.DefaultInstance.SetEditorP12FileName("planets-tests-2ec2a79f2334.p12");
+    FirebaseApp.DefaultInstance.SetEditorServiceAccountEmail("daniel@planets-tests.iam.gserviceaccount.com ");
+    FirebaseApp.DefaultInstance.SetEditorP12Password("notasecret");
+		
+		getNodesTest.GetExplanations();
 
-		Debug.Log(Router.Players());
-		Debug.Log(Router.Planets());
-	}
-	
-	public void CreateNewPlayer (Player player, string uid) { // We're saving data!
-		//we need to convert the object to raw json to put it on the database
-		string playerJSON = JsonUtility.ToJson(player);
-		Router.PlayerWithUID(uid).SetRawJsonValueAsync(playerJSON);
+		Debug.Log(Router.subjectReference);
 	}
 
 	public void GetPlayers (Action<List<Player>> completionBlock) { // We're retrieving data!
@@ -54,41 +53,50 @@ public class DatabaseManager : MonoBehaviour {
 		});
 	}
 
-	public void CreateNewSubject (Subject subject) {
-		Debug.Log(subject.subject);
-		string subjectJson = JsonUtility.ToJson(subject);
-		Router.Subject().SetRawJsonValueAsync(subjectJson);
-	}
-
-	public void CreateNewExplanations (List<string> explanations) {
-		foreach (string explanation in explanations)
-		{			
-			//Router.Explanation().Child("Paragraph").SetValueAsync(explanation);
-			Router.Explanation().SetValueAsync(explanation);
-		}
-	}
-
-	public void CreateNewQuestions (List<string> questions) {
-		foreach (string question in questions)
-		{
-				Router.Question().Child("Question").SetValueAsync(question);
-		}
-	}
-
-	public void CreateNewAnswers (List<Answer> answers) {
-		foreach (Answer answer in answers)
-		{
-			string answerJson = JsonUtility.ToJson(answer);
-			Debug.Log("Conteudo do answerJson: " + answerJson);
-			Router.Answer().SetRawJsonValueAsync(answerJson);
-		}
-	}
-
-	public void GetPlanets (Action<List<Player>> completionBlock) {
+	public void GetPlanets (Action<List<Planet>> completionBlock) {
+		Debug.Log("Function fired");
 		List<Planet> tempList = new List<Planet>(); 
 
 		Router.Planets().GetValueAsync().ContinueWith(task => {
-			
+			if(task.IsFaulted || task.IsCanceled) {				
+				Debug.Log("Ocorreu um erro com a task");				
+				return;
+			}
+			else if (task.IsCompleted) {
+				Debug.Log("Task Fired");
+				DataSnapshot planets = task.Result;
+				Debug.Log(planets);
+				foreach (DataSnapshot itemNode in planets.Children) //de onde vem o taskResult?
+				{
+						var planetDictionary = (IDictionary<string, object>)itemNode.Value;
+						Planet newPlanet = new Planet(planetDictionary);
+						tempList.Add(newPlanet);
+				}
+				completionBlock(tempList);
+			}				
+		});
+	}
+
+	public void GetExplanation (Action<List<string>> completionBlock) {
+		Debug.Log("Function fired");
+		List<string> tempList = new List<string>(); 
+
+		Router.Subject().GetValueAsync().ContinueWith(task => {
+			if(task.IsFaulted || task.IsCanceled) {				
+				Debug.Log("Ocorreu um erro com a task");				
+				return;
+			}
+			else if (task.IsCompleted) {
+				Debug.Log("Task ContinueWith() Fired");
+				DataSnapshot paragraphs = task.Result;
+				Debug.Log(paragraphs);
+				foreach (DataSnapshot itemNode in paragraphs.Children) 
+				{
+						var paragraph = itemNode.Value.ToString();					
+						tempList.Add(paragraph);
+				}
+				completionBlock(tempList);
+			}
 		});
 	}
 }
