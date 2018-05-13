@@ -29,9 +29,6 @@ public class DatabaseManager : MonoBehaviour {
 		FirebaseApp.DefaultInstance.SetEditorP12FileName("planets-tests-2ec2a79f2334.p12");
     FirebaseApp.DefaultInstance.SetEditorServiceAccountEmail("daniel@planets-tests.iam.gserviceaccount.com ");
     FirebaseApp.DefaultInstance.SetEditorP12Password("notasecret");
-		
-		getNodesTest.GetExplanations();
-		getNodesTest.GetPlanetNodes();
 	}
 
 	public void GetPlayers (Action<List<Player>> completionBlock) { // We're retrieving data!
@@ -72,17 +69,46 @@ public class DatabaseManager : MonoBehaviour {
 		});
 	}
 
-	public void GetExplanation (Action<List<Explanation>> completionBlock) {		
+	public void GetThemes (Action<List<Theme>> completionBlock) {
+		List<Theme> tempList = new List<Theme>(); 
+
+		Router.Themes("Jupiter").GetValueAsync().ContinueWith(task => {			
+			DataSnapshot themes = task.Result;
+			foreach (DataSnapshot itemNode in themes.Children) //de onde vem o taskResult?
+			{
+				var themeName = itemNode.Key.ToString();				
+				tempList.Add(new Theme(themeName));
+			}
+			completionBlock(tempList);		
+		});
+	}
+
+	public void GetSubjects (Action<List<Subject>> completionBlock, string planet, string theme) {
+		List<Subject> tempList = new List<Subject>(); 
+
+		Router.Subjects("Jupiter", "Historia").GetValueAsync().ContinueWith(task => {			
+			DataSnapshot subjects = task.Result;
+			foreach (DataSnapshot itemNode in subjects.Children) //de onde vem o taskResult?
+			{
+				var subjectName = itemNode.Key.ToString();				
+				tempList.Add(new Subject(subjectName));
+			}
+			completionBlock(tempList);		
+		});
+	}
+
+
+	public void GetExplanationParagraphs (Action<List<Explanation>> completionBlock, string planet, string theme, string subject) {		
 		List<Explanation> tempList = new List<Explanation>(); 
 
-		Router.subjectReference.Child("Explanation").GetValueAsync().ContinueWith(task => {
-				DataSnapshot paragraphs = task.Result;
-				foreach (DataSnapshot itemNode in paragraphs.Children) 
-				{
-						var paragraph = itemNode.Value.ToString();					
-						tempList.Add(new Explanation(paragraph));
-				}
-				completionBlock(tempList);
+		Router.ExplanationParagraphs(planet, theme, subject).GetValueAsync().ContinueWith(task => {
+			DataSnapshot paragraphs = task.Result;
+			foreach (DataSnapshot itemNode in paragraphs.Children) 
+			{
+				var paragraph = itemNode.Value.ToString();					
+				tempList.Add(new Explanation(paragraph));
+			}
+			completionBlock(tempList);
 		});
 	}
 }
