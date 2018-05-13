@@ -14,14 +14,14 @@ public class DataAdder {
 	public void CreateNewExplanations (List<string> explanations) {
 		foreach (string explanation in explanations)
 		{						
-			Router.Explanation().SetValueAsync(explanation);
+			RouteAdder.Explanation().SetValueAsync(explanation);
 		}
 	}
 
 	public void CreateNewQuestions (List<string> questions) {
 		foreach (string question in questions)
 		{
-				Router.Question().Child("Question").SetValueAsync(question);
+				RouteAdder.Question().Child("Question").SetValueAsync(question);
 		}
 	}
 
@@ -30,7 +30,7 @@ public class DataAdder {
 		{
 			string answerJson = JsonUtility.ToJson(answer);
 			Debug.Log("Conteudo do answerJson: " + answerJson);
-			Router.Answer().SetRawJsonValueAsync(answerJson);
+			RouteAdder.Answer().SetRawJsonValueAsync(answerJson);
 		}
 	}
 }
