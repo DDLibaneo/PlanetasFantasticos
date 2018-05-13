@@ -9,30 +9,15 @@ public class Router : MonoBehaviour {
 
 	// Root reference to our project
 	public static DatabaseReference baseRef = FirebaseDatabase.DefaultInstance.RootReference;
-	public static DatabaseReference planetReference = Planet("Jupiter");
-	//Fisica, Caracteristicas, Historia
-	public static DatabaseReference themeReference = Theme("Historia"); 
-	public static DatabaseReference subjectReference = GetSubject("Exploracao");
-	public static DatabaseReference questionReference = GetQuestion("-LBJcc3QPZLbkt1go1f6");
 
 	public static DatabaseReference Players () {
 
 		return baseRef.Child("players");
 	}
 
-	public static DatabaseReference PlayerWithUID (string uid) { // Will look up the player with the uid we pass in
-
+		public static DatabaseReference PlayerWithUID (string uid) { // Will look up the player with the uid we pass in
+		
 		return baseRef.Child("players").Child(uid);
-	}
-
-	public static DatabaseReference Planets () {
-
-		return baseRef.Child("Planets");
-	}
-
-	public static DatabaseReference Planet (Planet planetName) {
-
-		return baseRef.Child("Planets").Child(planetName.planet);
 	}
 
 	public static DatabaseReference Planet (string planetName) {
@@ -40,42 +25,40 @@ public class Router : MonoBehaviour {
 		return baseRef.Child("Planets").Child(planetName);
 	}
 
-	public static DatabaseReference Theme (string themeName) {
+	public static DatabaseReference Planets () {
 
-		return planetReference.Child("Themes").Child(themeName);
+		return baseRef.Child("Planets");
 	}
 
-	public static DatabaseReference Subject () {
+	public static DatabaseReference Theme (string planet, string theme) {
 
-		string pushKey = themeReference.Child("Subjects").Push().Key;
-		return themeReference.Child("Subjects").Child(pushKey);
+		return Planet(planet).Child("Themes").Child(theme);
 	}
 
-	public static DatabaseReference GetSubject (string pushKey) {
-
-		return themeReference.Child("Subjects").Child(pushKey);
+	public static DatabaseReference Themes (string planet) {
+		
+		return Planets().Child(planet).Child("Themes");
 	}
 
-	public static DatabaseReference Explanation () { 
+	public static DatabaseReference Subject (string planet, string theme, string subject) {
 
-		string pushKey = subjectReference.Child("Explanation").Push().Key;
-		return subjectReference.Child("Explanation").Child(pushKey);
+		return Theme(planet, theme).Child("Subjects").Child(subject);
 	}
 
-	public static DatabaseReference Question () { 
+	public static DatabaseReference Subjects (string planet, string theme) {
 
-		string pushKey = subjectReference.Child("Question").Push().Key;
-		return subjectReference.Child("Questions").Child(pushKey);
+		return Theme(planet, theme).Child("Subjects");
 	}
 
-	public static DatabaseReference GetQuestion (string pushKey) {
+	public static DatabaseReference ExplanationParagraphs (string planet, string theme, string subject) {
+		
+		return Subject(planet, theme, subject).Child("Explanation");
+	}
+	
+	public static DatabaseReference Questions (string planet, string theme, string subject) {
 
-		return subjectReference.Child("Questions").Child(pushKey);
+		return Subject(planet, theme, subject).Child("Questions");
 	}
 
-	public static DatabaseReference Answer () {
-
-		string pushKey = questionReference.Push().Key;
-		return questionReference.Child("Answers").Child(pushKey);
-	}
+	
 }
