@@ -8,12 +8,12 @@ using Firebase.Unity.Editor;
 public class Router : MonoBehaviour {
 
 	// Root reference to our project
-	private static DatabaseReference baseRef = FirebaseDatabase.DefaultInstance.RootReference;
-	private static DatabaseReference planetReference = Planet("Marte");
+	public static DatabaseReference baseRef = FirebaseDatabase.DefaultInstance.RootReference;
+	public static DatabaseReference planetReference = Planet("Jupiter");
 	//Fisica, Caracteristicas, Historia
-	private static DatabaseReference themeReference = Theme("Historia"); 
-	private static DatabaseReference subjectReference = GetSubject("PrimeirasObservacoes");
-	private static DatabaseReference questionReference = GetQuestion("-LBJcc3QPZLbkt1go1f6");
+	public static DatabaseReference themeReference = Theme("Historia"); 
+	public static DatabaseReference subjectReference = GetSubject("Exploracao");
+	public static DatabaseReference questionReference = GetQuestion("-LBJcc3QPZLbkt1go1f6");
 
 	public static DatabaseReference Players () {
 
@@ -27,7 +27,7 @@ public class Router : MonoBehaviour {
 
 	public static DatabaseReference Planets () {
 
-		return baseRef.Child("planets");
+		return baseRef.Child("Planets");
 	}
 
 	public static DatabaseReference Planet (Planet planetName) {

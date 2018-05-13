@@ -31,8 +31,7 @@ public class DatabaseManager : MonoBehaviour {
     FirebaseApp.DefaultInstance.SetEditorP12Password("notasecret");
 		
 		getNodesTest.GetExplanations();
-
-		Debug.Log(Router.subjectReference);
+		getNodesTest.GetPlanetNodes();
 	}
 
 	public void GetPlayers (Action<List<Player>> completionBlock) { // We're retrieving data!
@@ -54,7 +53,6 @@ public class DatabaseManager : MonoBehaviour {
 	}
 
 	public void GetPlanets (Action<List<Planet>> completionBlock) {
-		Debug.Log("Function fired");
 		List<Planet> tempList = new List<Planet>(); 
 
 		Router.Planets().GetValueAsync().ContinueWith(task => {
@@ -63,40 +61,28 @@ public class DatabaseManager : MonoBehaviour {
 				return;
 			}
 			else if (task.IsCompleted) {
-				Debug.Log("Task Fired");
 				DataSnapshot planets = task.Result;
-				Debug.Log(planets);
 				foreach (DataSnapshot itemNode in planets.Children) //de onde vem o taskResult?
 				{
-						var planetDictionary = (IDictionary<string, object>)itemNode.Value;
-						Planet newPlanet = new Planet(planetDictionary);
-						tempList.Add(newPlanet);
+					var planetName = itemNode.Key.ToString();				
+					tempList.Add(new Planet(planetName));
 				}
 				completionBlock(tempList);
 			}				
 		});
 	}
 
-	public void GetExplanation (Action<List<string>> completionBlock) {
-		Debug.Log("Function fired");
-		List<string> tempList = new List<string>(); 
+	public void GetExplanation (Action<List<Explanation>> completionBlock) {		
+		List<Explanation> tempList = new List<Explanation>(); 
 
-		Router.Subject().GetValueAsync().ContinueWith(task => {
-			if(task.IsFaulted || task.IsCanceled) {				
-				Debug.Log("Ocorreu um erro com a task");				
-				return;
-			}
-			else if (task.IsCompleted) {
-				Debug.Log("Task ContinueWith() Fired");
+		Router.subjectReference.Child("Explanation").GetValueAsync().ContinueWith(task => {
 				DataSnapshot paragraphs = task.Result;
-				Debug.Log(paragraphs);
 				foreach (DataSnapshot itemNode in paragraphs.Children) 
 				{
 						var paragraph = itemNode.Value.ToString();					
-						tempList.Add(paragraph);
+						tempList.Add(new Explanation(paragraph));
 				}
 				completionBlock(tempList);
-			}
 		});
 	}
 }
