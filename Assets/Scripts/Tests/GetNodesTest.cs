@@ -71,10 +71,8 @@ public class GetNodesTest : MonoBehaviour {
 		
 		DatabaseManager.sharedInstance.GetQuestions(result => {
 			questions	= result;
-			Debug.Log("Entrei");
 			foreach (var item in questions)
 			{
-				Debug.Log("Entrei");
 				Debug.Log(item.question);
 			}
 		}, "Jupiter", "Historia", "Exploracao");
