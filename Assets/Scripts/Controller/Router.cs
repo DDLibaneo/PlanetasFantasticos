@@ -6,7 +6,6 @@ using Firebase.Database;
 using Firebase.Unity.Editor;
 
 public class Router : MonoBehaviour {
-
 	// Root reference to our project
 	public static DatabaseReference baseRef = FirebaseDatabase.DefaultInstance.RootReference;
 
@@ -60,5 +59,5 @@ public class Router : MonoBehaviour {
 		return Subject(planet, theme, subject).Child("Questions");
 	}
 
-	
+
 }
