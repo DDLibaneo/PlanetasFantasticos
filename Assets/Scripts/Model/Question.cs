@@ -5,14 +5,14 @@ using UnityEngine;
 [System.Serializable]
 public class Question {
 	
-	public List<string> questions;
+	public string question;
 
-	public Question (List<string> questions) {
-		this.questions = questions;
+	public Question (string question) {
+		this.question = question;
 	}
 
-	// public Question (IDictionary<string, object> dictionary) {
-	// 	this.question = dictionary["question"].ToString();
-	// }
+	public Question (IDictionary<string, object> dictionary) {
+		this.question = dictionary["Question"].ToString();
+  }
 	
 }
