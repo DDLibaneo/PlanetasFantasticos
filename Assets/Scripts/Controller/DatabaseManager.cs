@@ -26,9 +26,9 @@ public class DatabaseManager : MonoBehaviour {
 
 		DontDestroyOnLoad(gameObject);
 		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://planets-tests.firebaseio.com/");
-		FirebaseApp.DefaultInstance.SetEditorP12FileName("planets-tests-2ec2a79f2334.p12");
-    FirebaseApp.DefaultInstance.SetEditorServiceAccountEmail("daniel@planets-tests.iam.gserviceaccount.com ");
-    FirebaseApp.DefaultInstance.SetEditorP12Password("notasecret");
+		// FirebaseApp.DefaultInstance.SetEditorP12FileName("planets-tests-2ec2a79f2334.p12");
+    // FirebaseApp.DefaultInstance.SetEditorServiceAccountEmail("daniel@planets-tests.iam.gserviceaccount.com ");
+    // FirebaseApp.DefaultInstance.SetEditorP12Password("notasecret");
 	}
 
 	public void GetPlayers (Action<List<Player>> completionBlock) { // We're retrieving data!
@@ -38,7 +38,6 @@ public class DatabaseManager : MonoBehaviour {
 		Router.Players().GetValueAsync().ContinueWith(task => { // here our task returns a Data Snapshot	
 			DataSnapshot players = task.Result; // this snapshot will be an iDictionary of iDictionaries, that's how you set up a player node when saving new player info
 			// we can get each player individual dictionary with an foreach loop:
-
 			foreach (DataSnapshot playerNode in players.Children) {
 				var playerDictionary = (IDictionary<string, object>)playerNode.Value; //we convert the playerNode.Value into an iDictionary of json objects]
 				Player newPlayer = new Player(playerDictionary);
@@ -52,20 +51,14 @@ public class DatabaseManager : MonoBehaviour {
 	public void GetPlanets (Action<List<Planet>> completionBlock) {
 		List<Planet> tempList = new List<Planet>(); 
 
-		Router.Planets().GetValueAsync().ContinueWith(task => {
-			if(task.IsFaulted || task.IsCanceled) {				
-				Debug.Log("Ocorreu um erro com a task");				
-				return;
+		Router.Planets().GetValueAsync().ContinueWith(task => {			
+			DataSnapshot planets = task.Result;
+			foreach (DataSnapshot itemNode in planets.Children) //de onde vem o taskResult?
+			{
+				string planetName = itemNode.Key.ToString();				
+				tempList.Add(new Planet(planetName));
 			}
-			else if (task.IsCompleted) {
-				DataSnapshot planets = task.Result;
-				foreach (DataSnapshot itemNode in planets.Children) //de onde vem o taskResult?
-				{
-					var planetName = itemNode.Key.ToString();				
-					tempList.Add(new Planet(planetName));
-				}
-				completionBlock(tempList);
-			}				
+			completionBlock(tempList);
 		});
 	}
 
@@ -76,7 +69,7 @@ public class DatabaseManager : MonoBehaviour {
 			DataSnapshot themes = task.Result;
 			foreach (DataSnapshot itemNode in themes.Children) //de onde vem o taskResult?
 			{
-				var themeName = itemNode.Key.ToString();				
+				string themeName = itemNode.Key.ToString();				
 				tempList.Add(new Theme(themeName));
 			}
 			completionBlock(tempList);		
@@ -90,13 +83,12 @@ public class DatabaseManager : MonoBehaviour {
 			DataSnapshot subjects = task.Result;
 			foreach (DataSnapshot itemNode in subjects.Children) //de onde vem o taskResult?
 			{
-				var subjectName = itemNode.Key.ToString();				
+				string subjectName = itemNode.Key.ToString();				
 				tempList.Add(new Subject(subjectName));
 			}
 			completionBlock(tempList);		
 		});
 	}
-
 
 	public void GetExplanationParagraphs (Action<List<Explanation>> completionBlock, string planet, string theme, string subject) {		
 		List<Explanation> tempList = new List<Explanation>(); 
@@ -105,8 +97,23 @@ public class DatabaseManager : MonoBehaviour {
 			DataSnapshot paragraphs = task.Result;
 			foreach (DataSnapshot itemNode in paragraphs.Children) 
 			{
-				var paragraph = itemNode.Value.ToString();					
+				string paragraph = itemNode.Value.ToString();					
 				tempList.Add(new Explanation(paragraph));
+			}
+			completionBlock(tempList);
+		});
+	}
+
+	public void GetQuestions (Action<List<Question>> completionBlock, string planet, string theme, string subject) {
+		List<Question> tempList = new List<Question>(); 
+
+		Router.Questions(planet, theme, subject).GetValueAsync().ContinueWith(task => {
+			DataSnapshot questions = task.Result;
+			foreach (DataSnapshot itemNode in questions.Children) 
+			{
+				var questionDictionary = (IDictionary<string, object>)itemNode.Value;				
+				Question newQuestion = new Question(questionDictionary);
+				tempList.Add(newQuestion);			
 			}
 			completionBlock(tempList);
 		});
