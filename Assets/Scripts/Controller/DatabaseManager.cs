@@ -26,9 +26,6 @@ public class DatabaseManager : MonoBehaviour {
 
 		DontDestroyOnLoad(gameObject);
 		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://planets-tests.firebaseio.com/");
-		// FirebaseApp.DefaultInstance.SetEditorP12FileName("planets-tests-2ec2a79f2334.p12");
-    // FirebaseApp.DefaultInstance.SetEditorServiceAccountEmail("daniel@planets-tests.iam.gserviceaccount.com ");
-    // FirebaseApp.DefaultInstance.SetEditorP12Password("notasecret");
 	}
 
 	public void GetPlayers (Action<List<Player>> completionBlock) { // We're retrieving data!
@@ -109,11 +106,12 @@ public class DatabaseManager : MonoBehaviour {
 
 		Router.Questions(planet, theme, subject).GetValueAsync().ContinueWith(task => {
 			DataSnapshot questions = task.Result;
+
 			foreach (DataSnapshot itemNode in questions.Children) 
 			{
-				var questionDictionary = (IDictionary<string, object>)itemNode.Value;				
+				var questionDictionary = (IDictionary<string, object>)itemNode.Value;
 				Question newQuestion = new Question(questionDictionary);
-				tempList.Add(newQuestion);			
+				tempList.Add(newQuestion);
 			}
 			completionBlock(tempList);
 		});
