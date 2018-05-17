@@ -103,15 +103,45 @@ public class DatabaseManager : MonoBehaviour {
 
 	public void GetQuestions (Action<List<Question>> completionBlock, string planet, string theme, string subject) {
 		List<Question> tempList = new List<Question>(); 
+		
+		Router.Questions(planet, theme, subject).GetValueAsync().ContinueWith(task => {
+			DataSnapshot questions = task.Result;
+			Question newQuestion = new Question();
+
+			foreach (DataSnapshot itemNode in questions.Children) 
+			{				
+				foreach (DataSnapshot item in itemNode.Children)
+				{					
+					if (item.Key.ToString() == "Question") {
+						//Debug.Log(item.Value.ToString());
+						newQuestion.question = item.Value.ToString();
+					}
+					if(item.Key.ToString() == "Answers") {
+						foreach (DataSnapshot answer in item.Children)
+						{
+							//fazer um IDictionary como no player
+							
+						}
+					}					
+				}
+				tempList.Add(newQuestion);
+			}
+			completionBlock(tempList);
+		});
+	}
+
+	public void GetAnswers (Action<List<string>> completionBlock, string planet, string theme, string subject) {
+		List<string> tempList = new List<string>(); 
 
 		Router.Questions(planet, theme, subject).GetValueAsync().ContinueWith(task => {
 			DataSnapshot questions = task.Result;
 
-			foreach (DataSnapshot itemNode in questions.Children) 
-			{
-				var questionDictionary = (IDictionary<string, object>)itemNode.Value;
-				Question newQuestion = new Question(questionDictionary);
-				tempList.Add(newQuestion);
+			foreach (DataSnapshot question in questions.Children) 
+			{											
+				foreach (DataSnapshot item in question.Children)
+				{
+					//Debug.Log(item.;
+				}					
 			}
 			completionBlock(tempList);
 		});
