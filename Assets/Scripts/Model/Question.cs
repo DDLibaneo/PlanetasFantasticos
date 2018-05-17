@@ -5,7 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class Question {
 	
-	public string question;
+	public string question { get; set; }
+	public List<Answer> answers = new List<Answer>();
+
+	public Question () {
+
+	}
 
 	public Question (string question) {
 		this.question = question;
@@ -13,6 +18,6 @@ public class Question {
 
 	public Question (IDictionary<string, object> dictionary) {
 		this.question = dictionary["Question"].ToString();
+		//this.answers = dictionary[""]
   }
-	
 }
