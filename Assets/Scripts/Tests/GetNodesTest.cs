@@ -8,6 +8,7 @@ public class GetNodesTest : MonoBehaviour {
 	public List<Theme> themes = new List<Theme>();
 	public List<Subject> subjects = new List<Subject>();
 	public List<Question> questions = new List<Question>();
+	public List<string> answers = new List<string>();
 
 	void Start () {
 		
@@ -16,6 +17,7 @@ public class GetNodesTest : MonoBehaviour {
 		//GetSubjectNodes();
 		//GetExplanations();
 		GetQuestions();
+		//GetAnswers();
 	}
 
 	public void GetPlanetNodes() {
@@ -73,8 +75,21 @@ public class GetNodesTest : MonoBehaviour {
 			questions	= result;
 			foreach (var item in questions)
 			{
-				Debug.Log(item.question);
+				//Debug.Log(item.question);
 			}
 		}, "Jupiter", "Historia", "Exploracao");
+	}
+
+	public void GetAnswers() {
+		answers.Clear();
+
+		DatabaseManager.sharedInstance.GetAnswers(result => {
+			answers	= result;
+			foreach (var item in answers)
+			{
+				
+			}
+		}, "Jupiter", "Historia", "Exploracao");
+
 	}
 }
