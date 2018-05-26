@@ -8,5 +8,5 @@ public static class CurrentInstance {
 //fazer desta classe um Singleton ou usar outro design pattern (i.e state pattern)       
 	public static string currentPlanetName; 
 	public static string currentThemeName;
-	public static string currentSubjectName;    
+	public static string currentSubjectName;
 }

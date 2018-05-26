@@ -9,12 +9,13 @@ public class ExplanationManager : MonoBehaviour {
 	private GameObject contentQuestion;
 	private GameObject totalParagraphs;
 	private GameObject totalQuestions;
+	private DataGetter dataGetter;
 	
 	private int questionCounter = 0, paragraphCounter = 0;
 	private List<string> explanationParagraph = new List<string>();
 	private List<string> questions = new List<string>();	
 	
-	//private ExplanationParagraphAdder explanationParagraphAdder;
+	private ExplanationParagraphAdder explanationParagraphAdder;
 	//private QuestionAdderSwitch questionAdderSwitch;
 
 	private void OnLevelWasLoaded () {
@@ -26,15 +27,18 @@ public class ExplanationManager : MonoBehaviour {
 			//questionAdderSwitch = GetComponent<QuestionAdderSwitch>();
 			totalParagraphs = GameObject.FindGameObjectWithTag("TotalParagraphs");
 			totalQuestions = GameObject.FindGameObjectWithTag("TotalQuestions");
+
+			dataGetter = GameObject.FindObjectOfType<DataGetter>();
 			TriggerExplanation();
-        }
-    } 
+	  }
+  } 
 
 	private void TriggerExplanation () {
 		
 		//explanationParagraphAdder.AddExplanationParagraph(explanationParagraph);
-        StartExplanation();
-    }
+
+		StartExplanation();
+  }
 
 	private void StartExplanation () {
         
