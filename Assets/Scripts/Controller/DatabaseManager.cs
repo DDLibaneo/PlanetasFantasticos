@@ -12,7 +12,7 @@ public class DatabaseManager : MonoBehaviour {
  
 	public static DatabaseManager sharedInstance = null;
 	private DataAdder dataAdder = new DataAdder();
-	public GetNodesTest getNodesTest;
+	public DataGetter dataGetter;
 	/// <summary>
 	/// Awake this instance and initialize sharedInstance for Singleton pattern
 	/// </summary>
@@ -102,31 +102,34 @@ public class DatabaseManager : MonoBehaviour {
 	}
 
 	public void GetQuestions (Action<List<Question>> completionBlock, string planet, string theme, string subject) {
-		List<Question> tempList = new List<Question>(); 
+		List<Question> tempListQuestions = new List<Question>(); 
 		
 		Router.Questions(planet, theme, subject).GetValueAsync().ContinueWith(task => {
 			DataSnapshot questions = task.Result;
-			Question newQuestion = new Question();
+			Question newQuestion;
 
 			foreach (DataSnapshot itemNode in questions.Children) 
-			{				
+			{	
+				newQuestion = new Question();			
 				foreach (DataSnapshot item in itemNode.Children)
 				{					
-					if (item.Key.ToString() == "Question") {
-						//Debug.Log(item.Value.ToString());
+					if (item.Key.ToString() == "Question") 
+					{						
 						newQuestion.question = item.Value.ToString();
 					}
 					if(item.Key.ToString() == "Answers") {
 						foreach (DataSnapshot answer in item.Children)
-						{
-							//fazer um IDictionary como no player
-							
+						{							
+							var answerDictionary = (IDictionary<string, object>)answer.Value; //we convert the playerNode.Value into an iDictionary of json objects]
+							Answer newAnswer = new Answer(answerDictionary);
+							newQuestion.answers.Add(newAnswer);							
 						}
 					}					
-				}
-				tempList.Add(newQuestion);
+				}				
+				tempListQuestions.Add(newQuestion);				
 			}
-			completionBlock(tempList);
+
+			completionBlock(tempListQuestions);
 		});
 	}
 
