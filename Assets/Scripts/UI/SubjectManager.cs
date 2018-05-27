@@ -96,7 +96,7 @@ public sealed class SubjectManager : MonoBehaviour {
 
 	public void AddHistorySubject () {
 		/*History*/
-		historySubjects.Add("Primeiras observações");
+		historySubjects.Add("Primeiras Observações");
 		if(CurrentInstance.currentPlanetName == "Marte") {
 			historySubjects.Add("Canais");
 		}

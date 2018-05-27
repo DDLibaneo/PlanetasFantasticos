@@ -70,6 +70,7 @@ public class DataGetter : MonoBehaviour {
 		
 		DatabaseManager.sharedInstance.GetExplanationParagraphs(result => {			
 			paragraphs = result;
+			
 			foreach (var item in paragraphs)
 			{
 				Debug.Log(item.explanation);

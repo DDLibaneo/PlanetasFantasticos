@@ -12,7 +12,7 @@ public class ExplanationManager : MonoBehaviour {
 	private DataGetter dataGetter;
 	
 	private int questionCounter = 0, paragraphCounter = 0;
-	private List<string> explanationParagraph = new List<string>();
+	private List<Explanation> explanationParagraph = new List<Explanation>();
 	private List<string> questions = new List<string>();	
 	
 	private ExplanationParagraphAdder explanationParagraphAdder;
@@ -28,21 +28,29 @@ public class ExplanationManager : MonoBehaviour {
 			totalParagraphs = GameObject.FindGameObjectWithTag("TotalParagraphs");
 			totalQuestions = GameObject.FindGameObjectWithTag("TotalQuestions");
 
-			dataGetter = GameObject.FindObjectOfType<DataGetter>();
+			dataGetter = GameObject.FindObjectOfType<DataGetter>().GetComponent<DataGetter>();
 			TriggerExplanation();
 	  }
   } 
 
 	private void TriggerExplanation () {
 		
-		//explanationParagraphAdder.AddExplanationParagraph(explanationParagraph);
-
-		StartExplanation();
+		explanationParagraph.Clear();
+		
+		DatabaseManager.sharedInstance.GetExplanationParagraphs(result => {			
+			explanationParagraph = result;
+			
+			Debug.Log(explanationParagraph.Count);
+			StartExplanation();
+		}, StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentPlanetName, false), 
+			StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentThemeName, false), 
+			StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentSubjectName, false)
+		);	
   }
 
 	private void StartExplanation () {
         
-		contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[0];
+		contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[0].explanation;
 		totalParagraphs.GetComponent<Text>().text = "1" + " / " + (explanationParagraph.Count);
 		Debug.Log("Contagem de parágrafos: " + explanationParagraph.Count);
 	}
@@ -54,7 +62,7 @@ public class ExplanationManager : MonoBehaviour {
 		}
 		if (paragraphCounter < explanationParagraph.Count && paragraphCounter >= 0) {
 						
-			contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[paragraphCounter];
+			contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[paragraphCounter].explanation;
 			totalParagraphs.GetComponent<Text>().text = (paragraphCounter + 1) + " / " + (explanationParagraph.Count);
 		}
 		//Debug.Log("Contagem de parágrafos: " + explanationParagraph.Count);
@@ -67,7 +75,7 @@ public class ExplanationManager : MonoBehaviour {
 		}
 		if (paragraphCounter < explanationParagraph.Count && paragraphCounter >= 0) {
 			//Debug.Log(explanationParagraph[i]);
-			contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[paragraphCounter];
+			contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[paragraphCounter].explanation;
 			totalParagraphs.GetComponent<Text>().text = (paragraphCounter + 1) + " / " + (explanationParagraph.Count);
 		}
 		//Debug.Log("Contagem de parágrafos: " + explanationParagraph.Count);
@@ -123,5 +131,9 @@ public class ExplanationManager : MonoBehaviour {
 	public GameObject GetTotalQuestions () {
 
 		return totalQuestions;
+	}
+
+		public void GetExplanations() {
+
 	}
 }
