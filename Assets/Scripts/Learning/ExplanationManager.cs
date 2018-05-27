@@ -9,24 +9,22 @@ public class ExplanationManager : MonoBehaviour {
 	private GameObject contentQuestion;
 	private GameObject totalParagraphs;
 	private GameObject totalQuestions;
+	private GameObject toggleAnswers;
 	private DataGetter dataGetter;
 	
 	private int questionCounter = 0, paragraphCounter = 0;
 	private List<Explanation> explanationParagraph = new List<Explanation>();
-	private List<string> questions = new List<string>();	
+	private List<Question> questions = new List<Question>();	
 	
 	private ExplanationParagraphAdder explanationParagraphAdder;
-	//private QuestionAdderSwitch questionAdderSwitch;
 
 	private void OnLevelWasLoaded () {
        
 	   if (SceneManager.GetActiveScene().name == "05Aprendizado") {
 		  	
-			contentTeoria = GameObject.FindGameObjectWithTag("ContentTeoria");
-			//explanationParagraphAdder = GetComponent<ExplanationParagraphAdder>();
-			//questionAdderSwitch = GetComponent<QuestionAdderSwitch>();
-			totalParagraphs = GameObject.FindGameObjectWithTag("TotalParagraphs");
-			totalQuestions = GameObject.FindGameObjectWithTag("TotalQuestions");
+			contentTeoria = GameObject.FindGameObjectWithTag(ETags.tagContentTeoria);
+			totalParagraphs = GameObject.FindGameObjectWithTag(ETags.tagTotalParagraphs);
+			totalQuestions = GameObject.FindGameObjectWithTag(ETags.tagTotalQuestions);
 
 			dataGetter = GameObject.FindObjectOfType<DataGetter>().GetComponent<DataGetter>();
 			TriggerExplanation();
@@ -56,7 +54,7 @@ public class ExplanationManager : MonoBehaviour {
 	}
 
 	public void DisplayNextSentence () {
-		//changed i to paragraphCounter and questionCounter
+
 		if (paragraphCounter < explanationParagraph.Count - 1) {
 			paragraphCounter++;
 		}
@@ -65,7 +63,6 @@ public class ExplanationManager : MonoBehaviour {
 			contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[paragraphCounter].explanation;
 			totalParagraphs.GetComponent<Text>().text = (paragraphCounter + 1) + " / " + (explanationParagraph.Count);
 		}
-		//Debug.Log("Contagem de parágrafos: " + explanationParagraph.Count);
 	}
 
 	public void DisplayPreviousSentence () {
@@ -87,7 +84,7 @@ public class ExplanationManager : MonoBehaviour {
 			Debug.Log("");
 		}
 		if (questionCounter < questions.Count && questionCounter >= 0) {
-			contentQuestion.GetComponentInChildren<Text>().text = questions[questionCounter];
+			contentQuestion.GetComponentInChildren<Text>().text = questions[questionCounter].question;
 			totalQuestions.GetComponentInChildren<Text>().text = (questionCounter + 1) + " / " + (questions.Count);
 		}
 	}
@@ -97,7 +94,7 @@ public class ExplanationManager : MonoBehaviour {
 			questionCounter--;
 		}
 		if (questionCounter < questions.Count && questionCounter >= 0) {
-			contentQuestion.GetComponentInChildren<Text>().text = questions[questionCounter];
+			contentQuestion.GetComponentInChildren<Text>().text = questions[questionCounter].question;
 			totalQuestions.GetComponentInChildren<Text>().text = (questionCounter + 1) + " / " + (questions.Count);
 		}
 	}
@@ -113,10 +110,32 @@ public class ExplanationManager : MonoBehaviour {
 
 	private void TriggerQuestion () {
 		//Esta é Chamada no final da FindQuestionObjects
-		//questionAdderSwitch.AddQuestionSwitch(questions); /*Passar objeto Question*/
-		Debug.Log(questions[0]);
-		contentQuestion.GetComponentInChildren<Text>().text = questions[0];
-		totalQuestions.GetComponent<Text>().text = "1" + " / " + (questions.Count);
+		int cont = 0;
+		toggleAnswers = GameObject.FindGameObjectWithTag("ToggleResposta");
+		questions.Clear();
+		
+		DatabaseManager.sharedInstance.GetQuestions(result => {
+			questions	= result;
+
+			//Debug.Log(questions[0].answers[0].answer);
+			contentQuestion.GetComponentInChildren<Text>().text = questions[0].question;
+			totalQuestions.GetComponent<Text>().text = "1" + " / " + (questions.Count);
+			
+			foreach (Transform answerGameObject in toggleAnswers.transform)
+			{
+				Debug.Log("Entrei");
+				Text[] texts = answerGameObject.GetComponentsInChildren<Text>();
+				foreach (Text text in texts)
+				{
+					text.text = questions[0].answers[cont++].answer;		
+					Debug.Log(text.text);
+					Debug.Log(questions[0].answers[cont++].answer);
+				}				
+			}
+			
+		}, StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentPlanetName, false), 
+		StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentThemeName, false), 
+		StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentSubjectName, false));		
 	}
 
 	public void ClearQuestionsList () {
