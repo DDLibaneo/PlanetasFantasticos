@@ -38,7 +38,7 @@ public class ExplanationManager : MonoBehaviour {
 		DatabaseManager.sharedInstance.GetExplanationParagraphs(result => {			
 			explanationParagraph = result;
 			
-			Debug.Log(explanationParagraph.Count);
+			//Debug.Log(explanationParagraph.Count);
 			StartExplanation();
 		}, StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentPlanetName, false), 
 			StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentThemeName, false), 
@@ -50,7 +50,7 @@ public class ExplanationManager : MonoBehaviour {
         
 		contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[0].explanation;
 		totalParagraphs.GetComponent<Text>().text = "1" + " / " + (explanationParagraph.Count);
-		Debug.Log("Contagem de parágrafos: " + explanationParagraph.Count);
+		// Debug.Log("Contagem de parágrafos: " + explanationParagraph.Count);
 	}
 
 	public void DisplayNextSentence () {
@@ -127,12 +127,12 @@ public class ExplanationManager : MonoBehaviour {
 				Text[] texts = answerGameObject.GetComponentsInChildren<Text>();
 				foreach (Text text in texts)
 				{
-					text.text = questions[0].answers[cont++].answer;		
+					text.text = questions[0].answers[cont].answer;
 					Debug.Log(text.text);
-					Debug.Log(questions[0].answers[cont++].answer);
+					Debug.Log(questions[0].answers[cont].answer);
+					cont++;
 				}				
 			}
-			
 		}, StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentPlanetName, false), 
 		StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentThemeName, false), 
 		StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentSubjectName, false));		
