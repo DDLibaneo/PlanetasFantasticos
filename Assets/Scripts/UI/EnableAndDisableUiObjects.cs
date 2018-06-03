@@ -78,6 +78,36 @@ public class EnableAndDisableUiObjects : MonoBehaviour {
 		}
 	}
 
+	public void EnablePreviousQuestionButton () {
+		Button[] nextPrevButtons;
+		nextPrevButtons = GameObject.FindObjectsOfType<Button>();
+
+		foreach (Button button in nextPrevButtons) {
+
+			if(button.name == "BtnPrevQuestion") {
+
+				button.GetComponent<Image>().enabled = true;
+				button.GetComponent<Button>().enabled = true;
+				button.GetComponentInChildren<Text>().enabled = true;
+			}
+		}
+	}
+
+	public void DisablePreviousQuestionButton () {
+		Button[] nextPrevButtons;
+		nextPrevButtons = GameObject.FindObjectsOfType<Button>();
+
+		foreach (Button button in nextPrevButtons) {
+
+			if(button.name == "BtnPrevQuestion") {
+
+				button.GetComponent<Image>().enabled = false;
+				button.GetComponent<Button>().enabled = false;
+				button.GetComponentInChildren<Text>().enabled = false;
+			}
+		}
+	}
+
 	public void EnableParagraphCounter () {
 		
 		explanationManager.GetTotalParagraphs().GetComponent<Text>().enabled = true;
