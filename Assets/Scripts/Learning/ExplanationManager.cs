@@ -10,6 +10,7 @@ public class ExplanationManager : MonoBehaviour {
 	private GameObject totalParagraphs;
 	private GameObject totalQuestions;
 	private GameObject toggleAnswers;
+	private GameObject[] alternativas;
 	private DataGetter dataGetter;
 	
 	private int questionCounter = 0, paragraphCounter = 0;
@@ -19,7 +20,7 @@ public class ExplanationManager : MonoBehaviour {
 	private ExplanationParagraphAdder explanationParagraphAdder;
 
 	private void OnLevelWasLoaded () {
-       
+    
 	   if (SceneManager.GetActiveScene().name == "05Aprendizado") {
 		  	
 			contentTeoria = GameObject.FindGameObjectWithTag(ETags.tagContentTeoria);
@@ -50,7 +51,6 @@ public class ExplanationManager : MonoBehaviour {
         
 		contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[0].explanation;
 		totalParagraphs.GetComponent<Text>().text = "1" + " / " + (explanationParagraph.Count);
-		// Debug.Log("Contagem de parágrafos: " + explanationParagraph.Count);
 	}
 
 	public void DisplayNextSentence () {
@@ -58,6 +58,7 @@ public class ExplanationManager : MonoBehaviour {
 		if (paragraphCounter < explanationParagraph.Count - 1) {
 			paragraphCounter++;
 		}
+		
 		if (paragraphCounter < explanationParagraph.Count && paragraphCounter >= 0) {
 						
 			contentTeoria.GetComponentInChildren<Text>().text = explanationParagraph[paragraphCounter].explanation;
@@ -110,29 +111,29 @@ public class ExplanationManager : MonoBehaviour {
 
 	private void TriggerQuestion () {
 		//Esta é Chamada no final da FindQuestionObjects
-		int cont = 0;
-		toggleAnswers = GameObject.FindGameObjectWithTag("ToggleResposta");
+		int counterAnswers = 0, counterQuestions = 0;
+
+		toggleAnswers = GameObject.FindGameObjectWithTag(ETags.tagToggleResposta);
+		alternativas = GameObject.FindGameObjectsWithTag(ETags.tagAlternativas);
+
 		questions.Clear();
 		
 		DatabaseManager.sharedInstance.GetQuestions(result => {
 			questions	= result;
 
-			//Debug.Log(questions[0].answers[0].answer);
 			contentQuestion.GetComponentInChildren<Text>().text = questions[0].question;
 			totalQuestions.GetComponent<Text>().text = "1" + " / " + (questions.Count);
 			
-			foreach (Transform answerGameObject in toggleAnswers.transform)
+			for (counterQuestions = 0; counterQuestions < questions.Count; counterQuestions++)
 			{
-				Debug.Log("Entrei");
-				Text[] texts = answerGameObject.GetComponentsInChildren<Text>();
-				foreach (Text text in texts)
+				foreach (GameObject item in alternativas)
 				{
-					text.text = questions[0].answers[cont].answer;
-					Debug.Log(text.text);
-					Debug.Log(questions[0].answers[cont].answer);
-					cont++;
-				}				
+						item.GetComponentInChildren<Text>().text = questions[counterQuestions].answers[counterAnswers].answer;
+						item.GetComponentInChildren<AlternativeAnswer>().answer = questions[counterQuestions].answers[counterAnswers];
+						counterAnswers++;
+				}
 			}
+			
 		}, StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentPlanetName, false), 
 		StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentThemeName, false), 
 		StringManager.RemoveAllAnnoyingCharacters(CurrentInstance.currentSubjectName, false));		
